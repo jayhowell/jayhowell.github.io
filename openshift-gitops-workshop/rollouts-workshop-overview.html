@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>The App of Apps Pattern :: OpenShift GitOps Workshop</title>
-    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/07-app-of-apps.html">
-    <link rel="prev" href="05-syncwaves-hooks.html">
-    <link rel="next" href="rollouts-getting-started.html">
+    <title>Workshop Overview :: OpenShift GitOps Workshop</title>
+    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/rollouts-workshop-overview.html">
+    <link rel="prev" href="rollouts-getting-started.html">
+    <link rel="next" href="rollouts-bluegreen-rollout.html">
     <meta name="generator" content="Antora 3.1.9">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -194,7 +194,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="07-app-of-apps.html">6. App of Apps pattern</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -213,18 +213,18 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="rollouts-workshop-overview.html">Rollout Overview</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rollouts-workshop-overview.html#workshop-namespaces">Workshop Namespaces</a>
+    <a class="nav-link" href="#workshop-namespaces">Workshop Namespaces</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rollouts-workshop-overview.html#review-rollout-manager">Review RolloutManager</a>
+    <a class="nav-link" href="#review-rollout-manager">Review RolloutManager</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="rollouts-workshop-overview.html#deploy-application">Deploy Application</a>
+    <a class="nav-link" href="#deploy-application">Deploy Application</a>
   </li>
 </ul>
   </li>
@@ -342,139 +342,94 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">OpenShift GitOps Workshop</a></li>
-    <li><a href="07-app-of-apps.html">6. App of Apps pattern</a></li>
+    <li><a href="rollouts-getting-started.html">7. Rollouts</a></li>
+    <li><a href="rollouts-workshop-overview.html">Rollout Overview</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/07-app-of-apps.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/rollouts-workshop-overview.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">The App of Apps Pattern</h1>
+<h1 class="page">Workshop Overview</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>⏱️ <em>Estimated Time: 5-10 Minutes</em></p>
+<p>In this module we will:</p>
 </div>
-<div class="paragraph">
-<p>👩‍💻 <em>Role: Cluster Administrator</em></p>
-</div>
-<div class="paragraph">
-<p>Earlier in this workshop you created some managed Namespaces and applied a ResourceQuota to them, but didn&#8217;t deploy any resources into those Namespaces. That&#8217;s because you were acting as an administrator, configuring Namespaces and OpenShift access for development teams.</p>
-</div>
-<div class="paragraph">
-<p>The previous section demonstrated that Argo CD has a concept of Projects, and that each Project enforces a set of RBAC policies. Enabling your development teams to use Argo CD requires creating Projects and crafting appropriate RBAC policies.</p>
-</div>
-<div class="paragraph">
-<p>In this section you&#8217;ll manage <a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#projects">Argo Project CRs</a> and <a href="https://docs.openshift.com/container-platform/4.12/rest_api/user_and_group_apis/group-user-openshift-io-v1.html">OpenShift Group CRs</a> using Argo CD. These CRs will enable the <code>foo</code> user to deploy their own Applications using Argo CD.</p>
-</div>
-<div class="paragraph">
-<p>Instead of continuing to import and manage more Argo CD Applications one-by-one you&#8217;ll learn how to use the <a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/">App of Apps Pattern</a> to bootstrap multiple Applications at once. You&#8217;ll also learn about the Argo CD CLI in the process.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Review the namespaces being used</p>
+</li>
+<li>
+<p>Review how Rollouts was deployed with OpenShift GitOps</p>
+</li>
+<li>
+<p>Deploy the application in the Development environment</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_argo_cd_cli"><a class="anchor" href="#_the_argo_cd_cli"></a>The Argo CD CLI</h2>
+<h2 id="workshop-namespaces"><a class="anchor" href="#workshop-namespaces"></a>Workshop Namespaces</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The Web Terminal in your environment has the Argo CD CLI pre-installed. Login to your Argo CD instance via the CLI:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Login to the OpenShift Web Console as the <code>opentlc-mgr</code> user.</p>
-</li>
-<li>
-<p>Open the OpenShift Web Terminal using the <strong>&gt;_</strong> icon.</p>
-</li>
-<li>
-<p>Verify the Argo CD CLI is available by trying to view the installed version of the CLI:</p>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">argocd version</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Once you&#8217;ve confirmed the <code>argocd</code> binary is available, login to your Argo CD instance as the <code>admin</code> user:</p>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ARGO_PASSWORD=$(kubectl get secret openshift-gitops-cluster -o json -n openshift-gitops | jq '.data["admin.password"]' -r | base64 --decode)
-
-argocd login openshift-gitops-server.openshift-gitops.svc.cluster.local \
---insecure \
---username admin \
---password $ARGO_PASSWORD</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>List your current Applications using the following command:</p>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">argocd app list</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>The result displayed by the <code>argocd app list</code> should contain your <strong>console-customisations</strong> and <strong>managed-namespaces</strong> Applications and their status.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_creating_the_app_of_apps"><a class="anchor" href="#_creating_the_app_of_apps"></a>Creating the App of Apps</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Time to deploy the App of Apps. You can find the manifests for the App of Apps in the <em>apps/</em> folder of <a href="https://github.com/%USERID%/rht-summit-2023-gitops-cluster-mgmt">your copy of the workshop repository</a>. Take a look inside the <em>apps/</em> folder; you&#8217;ll see that it&#8217;s a <a href="https://helm.sh/">Helm chart</a>. Don&#8217;t worry if you&#8217;re not familiar with Helm charts, it&#8217;s basically a system for building fully formed YAML from a set of templates and variables/values:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><em>values.yaml</em> - contains a set of variables. If these look familiar it&#8217;s because they are - they&#8217;re values that are required by the Argo CD Application CR.</p>
-</li>
-<li>
-<p><em>Chart.yaml</em> - simply contains some metadata about this Helm chart.</p>
-</li>
-<li>
-<p><em>templates/</em> - contains a set of Application CRs that reference the variables defined in <em>values.yaml</em>.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Argo CD supports Helm charts, so you can use it to create the App of Apps from this Helm chart:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Open <strong>your copy</strong> of the <a href="https://github.com/%USERID%/rht-summit-2023-gitops-cluster-mgmt">workshop repository</a>.</p>
-</li>
-<li>
-<p>Press the dot/period key to open the GitHub editor.</p>
-</li>
-<li>
-<p>Change the <code>repoURL</code> in <em>apps/values.yaml</em> to point to your repository&#8217;s URL.</p>
 <div class="imageblock">
 <div class="content">
-<img src="_images/ex7.gh-values-yaml.png" alt="ex7.gh values yaml">
+<img src="_images/openshift-projects.png" alt="openshift projects">
 </div>
 </div>
+<div class="paragraph">
+<p>In this workshop each user will have access to three OpenShift Projects, i.e. namespaces, as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>user%USERNUM%-dev</em>. This represents the development environment where we will deploy the application as a vanilla Kubernetes Deployment so
+we can compare and contrast it to Rollouts.</p>
 </li>
 <li>
-<p>Use the <strong>Source Control</strong> tab to commit and push the change.</p>
+<p><em>user%USERNUM%-prod</em>. This is our production environment, here we will deploy a Rollout for the application. During the course of the workshop
+you will deploy rollouts using different strategies and analysis.</p>
 </li>
 <li>
-<p>Return to the Web Terminal where you logged in to your Argo CD cluster as the <code>admin</code> user and run the following command (set <code>GITHUB_URL</code> to your repository&#8217;s URL) to create the new <strong>app-of-apps</strong> Application:</p>
+<p><em>user%USERNUM%-tools</em>. This is where the CI/CD tooling is located, it contains a pipeline to promote image changes across the development and production
+environments. Additionally the upstream Rollouts Dashboard user interface is deployed in this namespace.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="review-rollout-manager"><a class="anchor" href="#review-rollout-manager"></a>Review RolloutManager Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The OpenShift GitOps Operator simplifies the deployment and management of Argo Rollouts in an OpenShift cluster.</p>
+</div>
+<div class="paragraph">
+<p>To deploy Argo Rollouts using the operator we need to define and create a RolloutManager
+custom resource in the namespace where we want to run the Rollout. In the case of our workshop a
+RolloutManager has already been provisioned for you.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Argo Rollouts can be deployed as either a namespace or cluster scope, the OpenShift GitOps operator
+currently only supports namespace scope.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To review the rollout manager, execute the following command:</p>
+</div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export GITHUB_URL=https://github.com/%USERID%/rht-summit-2023-gitops-cluster-mgmt
-
-argocd app create app-of-apps \
-    --server openshift-gitops-server.openshift-gitops.svc.cluster.local \
-    --dest-namespace openshift-gitops \
-    --dest-server https://kubernetes.default.svc \
-    --repo $GITHUB_URL \
-    --path apps</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get rolloutmanager argo-rollout -o yaml -n user%USERNUM%-prod | oc neat</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -484,48 +439,232 @@ argocd app create app-of-apps \
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
+The <code>oc</code> CLI tool is a superset of <code>kubectl</code> with some additional Openshift specific features. We will use <code>oc</code> in this tutorial but if you prefer you can use <code>kubectl</code> as well.
+In the previous command we are using a kubectl plugin called <a href="https://github.com/itaysk/kubectl-neat" target="_blank" rel="noopener">kubectl-neat</a>
+in order to tidy the yaml by removing additional fields, labels and annotations added automatically by Kubernetes.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>If the above command fails with an <code>Unauthenticated</code> error, repeat the <code>argocd</code> CLI login instructions you followed earlier.</p>
+<p>This will return an object as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: argoproj.io/v1alpha1
+kind: RolloutManager
+metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: user%USERNUM%:argoproj.io/RolloutManager:user%USERNUM%-prod/argo-rollout
+  name: argo-rollout
+  namespace: user%USERNUM%-prod
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As shown here this is a simple declaration which in turn results in the Operator creating
+a deployment with the Argo Rollout controller monitoring the <code>user%USERNUM%-prod</code> for
+<code>Rollout</code> resources.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can use the command &#8216;oc explain RolloutManager.spec&#8217; to see the supported configuration
+options.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-application"><a class="anchor" href="#deploy-application"></a>Deploy Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to proceed with this workshop we will need to deploy the application into the development
+and production namespaces. The application that we will be deploying is the <a href="https://github.com/argoproj/rollouts-demo">Argo Rollouts Demo</a>
+application that displays colored squares.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app.png" alt="rollouts demo app">
+</div>
+</div>
+<div class="paragraph">
+<p>Each time we need to deploy the application we will select a version of the application with a different color,
+this will enable use to visually see how the application is progressing.</p>
+</div>
+<div class="sect2">
+<h3 id="_clone_the_repository"><a class="anchor" href="#_clone_the_repository"></a>Clone the Repository</h3>
+<div class="paragraph">
+<p>You need to clone the repository into your web terminal because you will need to
+deploy various versions of the application as you progress through the workshop:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop" class="bare">https://github.com/OpenShiftDemos/argo-rollouts-workshop</a> ~/argo-rollouts-workshop</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All of the code used in this workshop will be located in the folder:</p>
+</div>
+<div class="paragraph">
+<p><code>~/argo-rollouts-workshop/documentation/modules/ROOT/examples</code></p>
+</div>
+<div class="paragraph">
+<p>Once you have cloned the repo, enter this directory in the terminal:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/argo-rollouts-workshop/documentation/modules/ROOT/examples/</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The web terminal only supports ephemeral storage. If you shut it down, or if it
+times out, any local filesystem changes made will be lost. This means you would
+need to clone the repository again. The web terminal is intended for
+troubleshooting and simple interaction, and not as a long-lived remote execution
+environment. For that, something like
+<a href="https://developers.redhat.com/products/openshift-dev-spaces/overview">OpenShift
+DevSpaces</a> is a better choice.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-</li>
-<li>
-<p>Return to the Argo CD dashboard and view the new <strong>app-of-apps</strong> Application. It should report that it&#8217;s out of sync.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/ex7.argo-cd-apps-out-of-sync.png" alt="ex7.argo cd apps out of sync">
 </div>
-</div>
-</li>
-<li>
-<p>Click on the <strong>Sync</strong> button, then click on the <strong>Synchronize</strong> button in the overlay that appears.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/ex7.argocd-sync-apps.png" alt="ex7.argocd sync apps">
-</div>
-</div>
-</li>
-<li>
-<p>Wait for the sync operation to complete, then return to the Argo CD dashboard <strong>Applications</strong> screen. It should look similar to the following screenshot:</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/ex7.argo-all-apps.png" alt="ex7.argo all apps">
-</div>
-</div>
-</li>
-</ol>
+<div class="sect2">
+<h3 id="_deploy_development"><a class="anchor" href="#_deploy_development"></a>Deploy Development</h3>
+<div class="paragraph">
+<p>In the development environment we will be deploying the application as a basic
+Kubernetes Deployment so that we can compare and contrast the behavior with Argo Rollouts.</p>
 </div>
 <div class="paragraph">
-<p>Nice! You have configured the App of Apps. This created new <strong>rbac</strong> and <strong>argo-projects</strong> Applications that manage Argo CD Projects and OpenShift user Groups for your development teams.</p>
+<p>To view the manifests that we will be using, examine the code in <code>./deploy/base</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ls ./deploy/base</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see that there are four files in this directory. The <code>deploy.yaml</code>, <code>service.yaml</code>
+and <code>route.yaml</code> represent the Deployment, Service and OpenShift Route respectively for the application.</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/deploy.yaml" target="_blank" rel="noopener">./deploy/base/deploy.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/deploy.yaml[]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/service.yaml" target="_blank" rel="noopener">./deploy/base/service.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/service.yaml[]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/route.yaml" target="_blank" rel="noopener">./deploy/base/route.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/route.yaml[]</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Routes are the way ingress is managed in OpenShift. Routes pre-date Kubernetes Ingress and
+while OpenShift supports both Routes and Ingress, Routes retain some additional capabilities and
+features not yet available in Ingress hence their continued usage.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is a fourth file called <code>kustomization.yaml</code>, this file is used by the <a href="https://kustomize.io" target="_blank" rel="noopener">Kustomize</a> tool and enables
+the management of Kubernetes manifests. Kustomize and Helm are the two most popular yaml management tools
+in GitOps and we use kustomize here to simplify our deployments.</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/kustomization.yaml" target="_blank" rel="noopener">./deploy/base/kustomization.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/kustomization.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To deploy the application in Development, we will use the <code>apply</code> command with <code>-k</code> switch that is available in <code>kubectl</code> and <code>oc</code>
+to process a kustomization. Run the following command in the terminal to deploy the application:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -k ./deploy/base -n user%USERNUM%-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once you have run the command we can confirm that the deployment has run successfully. Use the following command to ensure
+that the pods are up and running:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get pods -n user%USERNUM%-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The console should return something along the lines of</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                             READY   STATUS    RESTARTS   AGE
+rollouts-demo-785c8b55cb-m5mzg   1/1     Running   0          6m51s
+rollouts-demo-785c8b55cb-trvsd   1/1     Running   0          6m51s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are two pods since the Deployment specified two replicas.</p>
+</div>
+<div class="paragraph">
+<p>Next view the Route URL for this application. It&#8217;s in the <code>user%USERNUM%-dev1</code> Project.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-dev rollouts-demo -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Copy the URL into a browser and confirm that the application is running, you should see a grid of
+blue squares appearing and disappearing periodically as the application makes requests to its back-end
+from the browser.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-blue.png" alt="rollouts demo app blue">
+</div>
+</div>
+<div class="paragraph">
+<p>In the next module we will deploy a Blue-Green Rollouts version of this application and compare and contrast it to
+the traditional Kubernetes Deployment version of the application we just deployed.</p>
+</div>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="05-syncwaves-hooks.html" class="query-params-link">5. Sync Waves and Hooks</a></span>
-  <span class="next"><a href="rollouts-getting-started.html" class="query-params-link">7. Rollouts</a></span>
+  <span class="prev"><a href="rollouts-getting-started.html" class="query-params-link">7. Rollouts</a></span>
+  <span class="next"><a href="rollouts-bluegreen-rollout.html" class="query-params-link">Blue-Green Rollout</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">

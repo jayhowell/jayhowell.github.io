@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Blue-Green Rollout :: OpenShift GitOps Workshop</title>
+    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/rollouts-bluegreen-rollout.html">
+    <link rel="prev" href="rollouts-workshop-overview.html">
+    <link rel="next" href="rollouts-analysis.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://openshiftdemos.github.io/openshift-gitops-workshop">OpenShift GitOps Workshop</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="openshift-gitops-workshop" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">OpenShift GitOps Workshop</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-getting-started.html">1. Getting Started</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-getting-started.html#cluster-login">Cluster Login</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-getting-started.html#open-web-terminal">Open the Web Terminal</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-gitops-basics.html">2. GitOps Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-gitops-basics.html#review-argocd">Review Argo CD Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-gitops-basics.html#connect-argocd">Connecting to Argo CD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-gitops-basics.html#deploy-sample-application">Deploy a Sample Application</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-kustomize.html">3. Work with Kustomize</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-kustomize.html#exploring_kustomize">Exploring the Kustomize</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#exploring_kustomize_cli">Exploring the Kustomize CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#exploring_kustomize_with_oc">Exploring Kustomize with <code>oc</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-kustomize.html#deploying_kustomized_application">Deploying Kustomized Application</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#argocd_web_console">The ArgoCD Web Console</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#kustomized_application">Kustomized Application</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html">4. Work with Helm</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html#exploring-helm">Exploring Helm</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#exploring-helm-cli">Exploring the Helm CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html#exploring-helm-charts">Exploring Helm Charts</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#helm-template">Helm Template</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html#helm-charts-deploy-applications">Helm Chart Deployment in Argo CD</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#custom-values-files">Custom Values Files</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#parameter_values">Parameter Values</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-helm.html#helm-conclusion">Conclusion: Helm on ArgoCD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-syncwaves-hooks.html">5. Sync Waves and Hooks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-syncwaves-hooks.html#using_syncwaves">Using Sync Waves</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-syncwaves-hooks.html#exploring_the_manifests_waves">Exploring Sync Wave Manifests</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-syncwaves-hooks.html#using_resource_hooks">Using Resource Hooks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-syncwaves-hooks.html#exploring_the_manifests_hooks">Exploring Resource Hook Manifests</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-syncwaves-hooks.html#deploying_the_application">Deploying the Application</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="07-app-of-apps.html">6. App of Apps pattern</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-getting-started.html">7. Rollouts</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-getting-started.html">1. Getting Started</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-getting-started.html#cluster-login">Cluster Login</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-getting-started.html#open-web-terminal">Open the Web Terminal</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-workshop-overview.html">Rollout Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-workshop-overview.html#workshop-namespaces">Workshop Namespaces</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-workshop-overview.html#review-rollout-manager">Review RolloutManager</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-workshop-overview.html#deploy-application">Deploy Application</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html">Blue-Green Rollout</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#blue-green-strategy">Blue-Green Strategy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#deploy-blue-green-rollout">Deploy Blue-Green Rollout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#promote-image">Promote Image</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#enable-auto-promotion">Enable Auto-Promotion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#perform-rollback">Perform Rollback</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#cleanup">Clean-up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-analysis.html">Analysis</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#analysis-overview">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#analysis-deployment">Analysis Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#analysis-promotion">Promotion with Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#cleanup">Clean-up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-canary-rollout.html">Canary Rollout</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-canary-rollout.html#canary-strategy">Canary Strategy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-canary-rollout.html#deploy-canary-rollout">Deploy Canary Rollout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-canary-rollout.html#promote-image">Promote Image</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-canary-rollout.html#inline-analysis">Inline Analysis</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#rollout-conclusion.adoc">Conclusion</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#rollout-conclusion.adoc#more-resources">More Resources</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#08-acpgitops.adoc">8. Using ACM + GitOps</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-conclusion.html">7. Conclusion</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-conclusion.html#Resources">Resources</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">OpenShift GitOps Workshop</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">OpenShift GitOps Workshop</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">OpenShift GitOps Workshop</a></li>
+    <li><a href="rollouts-getting-started.html">7. Rollouts</a></li>
+    <li><a href="rollouts-bluegreen-rollout.html">Blue-Green Rollout</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/rollouts-bluegreen-rollout.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Blue-Green Rollout</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this module we will:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Review and understand the Blue-Green Strategy</p>
+</li>
+<li>
+<p>Deploy the Blue-Green Rollout to the production namespace</p>
+</li>
+<li>
+<p>Deploy a new image and observe the Rollout promotion process</p>
+</li>
+<li>
+<p>Perform a Rollback of a promotion</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="blue-green-strategy"><a class="anchor" href="#blue-green-strategy"></a>Blue-Green Strategy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a blue-green deployment we deploy a new version of the application in a separate stack from the current version with
+the two versions running in parallel for a period of time. This enables testing on the new version while users continue
+to access the current version of the application until a cut-over of traffic occurs.</p>
+</div>
+<div class="paragraph">
+<p>The diagram below illustrates this process over time.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/overview-blue-green.png" alt="overview blue green">
+</div>
+</div>
+<div class="paragraph">
+<p>In traditional infrastructure this approach can be very challenging. While Kubernetes is simpler due to its declarative nature, the process still tends to be cumbersome to manage. Bespoke automation would still need to be created to manage the separate stacks, and for
+testing and traffic management between versions.</p>
+</div>
+<div class="paragraph">
+<p>This is where Argo Rollouts comes in. It greatly reduces the complexity by providing these capabilities with a simple, declarative approach. In this module we will deploy a simple blue-green Rollout and explore its basic capabilities.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-blue-green-rollout"><a class="anchor" href="#deploy-blue-green-rollout"></a>Deploy Blue-Green Rollout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here we will deploy the blue-green rollout in the <code>user%USERNUM%-prod</code> namespace following the same process that we did for the Deployment in the previous module. Prior to starting,
+confirm you are still at the correct path.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/argo-rollouts-workshop/documentation/modules/ROOT/examples/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, let&#8217;s explore the manifests that we will be deploying in the <code>./bluegreen/base</code> folder:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ls ./bluegreen/base</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that this time we have files for <code>rollout.yaml</code>, <code>services.yaml</code> and <code>routes.yaml</code> which represent our Rollout, Services and Routes. We also have
+<code>kustomization.yaml</code> as per the last module.</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen/base/rollout.yaml" target="_blank" rel="noopener">./bluegreen/base/rollout.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-bluegreen-rollout.adoc - include::ROOT:example$bluegreen/base/rollout.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The structure of the Rollout is quite similar to the Deployment, it still uses the standard
+Kubernetes <a href="https://kubernetes.io/docs/concepts/workloads/pods/#pod-templates" target="_blank" rel="noopener">PodTemplate</a> but note that
+under <code>.spec.strategy</code> we have specified the <code>blueGreen</code> strategy. The Kubernetes Deployment object supports <code>rollout</code>
+and <code>replace</code> strategies whereas Argo Rollouts supports <code>blueGreen</code> and <code>canary</code> strategies.</p>
+</div>
+<div class="paragraph">
+<p>Under the <code>blueGreen</code> strategy we have identified the <code>active</code> and <code>preview</code> Kubernetes services for the rollout. This will be covered
+in more detail when services are discussed next.</p>
+</div>
+<div class="paragraph">
+<p>The field <code>autoPromotionEnabled</code> is set to <code>false</code>. This means the rollout will require manual intervention to promote. Manual promotion
+is enabled so the behavior of the rollout can be observed in-depth in subsequent sections of this module.</p>
+</div>
+<div class="paragraph">
+<p>The Argo Rollouts documentation provides a complete list
+of all of the <a href="https://argo-rollouts.readthedocs.io/en/stable/features/bluegreen/#configurable-features" target="_blank" rel="noopener">configurable features</a> for the blueGreen strategy
+and some of these additional features will be explored as we progress through the workshop.</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen/base/services.yaml" target="_blank" rel="noopener">./bluegreen/base/services.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-bluegreen-rollout.adoc - include::ROOT:example$bluegreen/base/services.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the services manifest we define two services, an active service and a preview service. The active service is the service that users of the application will be
+interacting with, the preview service will be used to access the new version of the application for testing purposes.</p>
+</div>
+<div class="paragraph">
+<p>As per the <a href="https://argo-rollouts.readthedocs.io/en/stable/features/bluegreen/#overview" target="_blank" rel="noopener">documentation</a>,
+Argo Rollouts automatically manages the traffic between the services by managing the <code>.spec.selector</code>. In a nutshell, Argo Rollouts
+will add a unique identifier label to pods and then update the selector in the service to bind the right pods to the right service. As
+we deploy the rollout this will be reviewed in more detail.</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen/base/routes.yaml" target="_blank" rel="noopener">./bluegreen/base/routes.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-bluegreen-rollout.adoc - include::ROOT:example$bluegreen/base/routes.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally we have two Route objects, one for active and one for preview, each tied to their respective service.</p>
+</div>
+<div class="paragraph">
+<p>To deploy the blue-green rollout, use the following command to process the kustomization:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -k ./bluegreen/base -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once you have run the command we can confirm that the rollout has deployed successfully. Use the following command to ensure
+that the pods are up and running:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get pods -l app=rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We are getting pods using the label <code>app=rollouts-demo</code> to specifically select pods from the rollout. Remember
+the RolloutManager pod is also deployed in the <code>user%USERNUM%-prod</code> namespace. Using the label enables us
+to exclude that pod.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The console should return something along the lines of:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                             READY   STATUS    RESTARTS   AGE
+rollouts-demo-66d84bcd76-pxtnc   1/1     Running   0          64s
+rollouts-demo-66d84bcd76-q49wt   1/1     Running   0          64s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are two pods since the Rollout application specified two replicas.</p>
+</div>
+<div class="paragraph">
+<p>Next retrieve the Routes for this application. It&#8217;s in the <code>user%USERNUM%-prod</code> Project.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get routes -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME      HOST/PORT                                                             PATH   SERVICES   PORT   TERMINATION     WILDCARD
+active    active-user%USERNUM%-prod.apps.cluster-nh5nw.nh5nw.sandbox2534.opentlc.com           active     http   edge/Redirect   None
+preview   preview-user%USERNUM%-prod.apps.cluster-nh5nw.nh5nw.sandbox2534.opentlc.com          preview    http   edge/Redirect   None</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Copy the value of the <code>HOST/PORT</code> of each route into an individual browser tab to confirm that both display the application with blue squares.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-blue.png" alt="rollouts demo app blue">
+</div>
+</div>
+<div class="paragraph">
+<p>Next let&#8217;s examine the active and preview services that were deployed, run the following command to see the active service.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get svc active -o yaml -n user%USERNUM%-prod | oc neat</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The console should display a service definition similar to the following:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    argo-rollouts.argoproj.io/managed-by-rollouts: rollouts-demo
+  labels:
+    app: rollouts-demo
+  name: active
+  namespace: user%USERNUM%-prod
+spec:
+  clusterIP: 172.30.104.238
+  clusterIPs:
+  - 172.30.104.238
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 8080
+  selector:
+    app: rollouts-demo
+    rollouts-pod-template-hash: 66d84bcd76</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the selector now has an additional key, <code>rollouts-pod-template-hash</code>, with a hashed value. This is how the rollout manages traffic
+between the active and preview versions. Since we have not deployed a new image, the preview service will have the same
+selector used there as well.</p>
+</div>
+<div class="paragraph">
+<p>Similar to Kubernetes deployments, each revision, i.e. version, of the Rollout is backed by a <a href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/" target="_blank" rel="noopener">ReplicaSet</a>.
+This ReplicaSet will have a <code>rollouts-pod-template-hash</code> label in its PodTemplate with a value unique to the revision. Argo Rollouts will automatically ensure that
+the selector in the service is pointing to the appropriate revision.</p>
+</div>
+<div class="paragraph">
+<p>To view this, output the manifest for the currently deployed ReplicaSet:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get rs -l app=rollouts-demo -n user%USERNUM%-prod -o yaml | oc neat</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note the <code>rollouts-pod-template-hash</code> in <code>spec.template.metadata.labels</code> field in the ReplicaSet.</p>
+</div>
+<div class="sect2">
+<h3 id="argo-rollouts-cli"><a class="anchor" href="#argo-rollouts-cli"></a>Argo Rollouts CLI</h3>
+<div class="paragraph">
+<p>Argo Rollouts provides a Command Line Interface (CLI) to support working with rollouts as a
+<a href="https://kubernetes.io/docs/reference/kubectl/" target="_blank" rel="noopener">kubectl</a> plugin. <a href="https://argo-rollouts.readthedocs.io/en/stable/installation/#kubectl-plugin-installation" target="blank">Instructions</a>
+for installing the plugin are available however this has already been done for you in this workshop.</p>
+</div>
+<div class="paragraph">
+<p>The plugin is well <a href="https://argo-rollouts.readthedocs.io/en/stable/features/kubectl-plugin/" target="_blank" rel="noopener">documented</a>
+and provides a number of commands and these can be used with our currently deployed rollout.</p>
+</div>
+<div class="paragraph">
+<p>To view a list of rollouts we can use the <code>list</code> command as follows:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts list rollout -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will display output as follows:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME           STRATEGY   STATUS        STEP  SET-WEIGHT  READY  DESIRED  UP-TO-DATE  AVAILABLE
+rollouts-demo  BlueGreen  Healthy       -     -           2/2    2        2           2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To view detailed information about rollout that was listed, use the <code>get</code> command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts get rollout rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command should output something similar to the following:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:            rollouts-demo
+Namespace:       user%USERNUM%-prod
+Status:          ✔ Healthy
+Strategy:        BlueGreen
+Images:          quay.io/openshiftdemos/rollouts-demo:blue (stable, active)
+Replicas:
+  Desired:       2
+  Current:       2
+  Updated:       2
+  Ready:         2
+  Available:     2
+
+NAME                                       KIND        STATUS     AGE    INFO
+⟳ rollouts-demo                            Rollout     ✔ Healthy  6m46s
+└──# revision:1
+   └──⧉ rollouts-demo-66d84bcd76           ReplicaSet  ✔ Healthy  6m46s  stable,active
+      ├──□ rollouts-demo-66d84bcd76-dxv4x  Pod         ✔ Running  6m46s  ready:1/1
+      └──□ rollouts-demo-66d84bcd76-k67q4  Pod         ✔ Running  6m46s  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With this command we can view the status of the rollout, <code>Healthy</code> in this case (hopefully!), as well as
+the ReplicaSets and Pods that are associated with the rollout. Notice that the ReplicaSet and Pod names
+include the <code>rollouts-pod-template-hash</code> that was shown earlier.</p>
+</div>
+<div class="paragraph">
+<p>To view the status of the rollout by itself you can use the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts status rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This should return a simple <code>Healthy</code> in the output.</p>
+</div>
+<div class="paragraph">
+<p>Similar to <code>kubectl rollout status</code> for Deployments, the <code>status</code> command
+will block when the rollout is in a paused state which can be useful when used with
+automation where you need to wait until it has finished rolling out (pun intended).</p>
+</div>
+<div class="paragraph">
+<p>Other commands are available to perform actions on the rollout such as a promoting
+a rollout, aborting a rollout, etc. A complete list of commands can be viewed with
+the <code>--help</code> switch and we will look at some of them during the course of this workshop.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="argo-rollouts-dashboard"><a class="anchor" href="#argo-rollouts-dashboard"></a>Argo Rollouts Dashboard</h3>
+<div class="paragraph">
+<p>The Argo Rollouts dashboard has been deployed for you already in the <code>user%USERNUM%-tools</code> namespace
+on the cluster for this workshop. To access the dashboard, run the following command to get the
+URL for the dashboard for your specific user:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-tools dashboard -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Copy the returned URL into a browser tab to access the dashboard.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollout-dashboard.png" alt="argo rollout dashboard">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The Argo Rollouts Dashboard is intended to be run on the developer&#8217;s local machine and as a result it does not support
+authentication or multi-tenancy. For convenience and simplicity it has been deployed on cluster for each user
+but this is not recommended as a general practice.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In the dashboard each rollout will show in its own tile on the overview screen. The tile will provide some
+basic information about the rollout as shown here:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollout-dashboard-details.png" alt="argo rollout dashboard details">
+</div>
+</div>
+<div class="paragraph">
+<p>Clicking on the tile will display a detailed view of the rollout as well as additional actions that
+are available for interacting with the rollout.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-tile-details.png" alt="argo rollouts dashboard tile details">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="promote-image"><a class="anchor" href="#promote-image"></a>Promote Image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section we will promote a new image and observe the behavior of the application during the promotion
+process. To promote the image we will use a simple pipeline to update the image reference to use a different
+color.</p>
+</div>
+<div class="paragraph">
+<p>To access this pipeline, in the OpenShift Console navigate to the <code>user%USERNUM%-tools</code> namespace and select
+the <code>Pipelines</code> view in the Developer perspective as per this screenshot.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-pipelines-overview.png" alt="console pipelines overview">
+</div>
+</div>
+<div class="paragraph">
+<p>Clicking on the pipeline name, <code>rollouts-pipeline</code>, will bring you to the following view:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-pipelines-promote.png" alt="console pipelines promote">
+</div>
+</div>
+<div class="paragraph">
+<p>As shown in the image, the pipeline consists of two tasks, <code>deploy-dev</code> will update and deploy the selected image in the
+Kubernetes Deployment in the <code>user%USERNUM%-dev</code> namespace while <code>deploy-prod</code> will do the same for the Rollout in the
+<code>user%USERNUM%-prod</code> namespace.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This pipeline is not meant to be a comprehensive example of how to manage image promotion, rather we
+are using it provide a simple way in the workshop to drive image changes. This pipeline uses OpenShift
+Pipelines, an implementation of the <a href="https://tekton.dev" target="_blank" rel="noopener">Tekton</a> project, however any Continuous Integration(CI) tool can be used with Argo Rollouts including Argo Workflows,
+GitHub Actions, GitLab, etc.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To start the pipeline, click the <code>Actions</code> dropdown and select the <code>Start</code> option:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-start-promote.png" alt="console start promote">
+</div>
+</div>
+<div class="paragraph">
+<p>This will show a dialog prompting for an image color, by default this will be blue however since blue is already
+deployed let&#8217;s select a different image color and go with <code>green</code>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-promote-params.png" alt="console promote params">
+</div>
+</div>
+<div class="paragraph">
+<p>Once <code>Start</code> is pressed, the pipeline will begin to execute. Wait until the pipeline has completed and is showing
+green check marks which signifies successful completion.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-pipeline-completed.png" alt="console pipeline completed">
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s validate that the change occurred in our development environment. As per the last module, the URL for the
+application in Development can be retrieved with the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-dev rollouts-demo -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Paste this url into a browser tab and confirm that the application is showing Green squares reflective of the green image that
+we deployed.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-green.png" alt="rollouts demo app green">
+</div>
+</div>
+<div class="paragraph">
+<p>Now let&#8217;s see what the application looks like in production where we are using Rollouts. First, let&#8217;s check the preview service by
+retrieving its URL and viewing it in the browser:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod preview -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-green.png" alt="rollouts demo app green">
+</div>
+</div>
+<div class="paragraph">
+<p>Again the application will display green squares, now let&#8217;s check the active service:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod active -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-blue.png" alt="rollouts demo app blue">
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the application is displaying blue squares. Since the rollout is using manual promotion,
+live users are still seeing the previous version of the application leaving the preview version, with the new
+version, available for testing.</p>
+</div>
+<div class="paragraph">
+<p>We can see how the rollout is managing the different revisions across ReplicaSets by using the Argo Rollouts
+CLI. Execute the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts get rollout rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This should return the following output:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:            rollouts-demo
+Namespace:       user%USERNUM%-prod
+Status:          ॥ Paused
+Message:         BlueGreenPause
+Strategy:        BlueGreen
+Images:          quay.io/openshiftdemos/rollouts-demo:blue (stable, active)
+                 quay.io/openshiftdemos/rollouts-demo:green (preview)
+Replicas:
+  Desired:       2
+  Current:       4
+  Updated:       2
+  Ready:         2
+  Available:     2
+
+NAME                                       KIND        STATUS     AGE  INFO
+⟳ rollouts-demo                            Rollout     ॥ Paused   17m
+├──# revision:2
+│  └──⧉ rollouts-demo-5999df6cf9           ReplicaSet  ✔ Healthy  41s  preview
+│     ├──□ rollouts-demo-5999df6cf9-q4kxg  Pod         ✔ Running  41s  ready:1/1
+│     └──□ rollouts-demo-5999df6cf9-t2hsd  Pod         ✔ Running  41s  ready:1/1
+└──# revision:1
+   └──⧉ rollouts-demo-66d84bcd76           ReplicaSet  ✔ Healthy  17m  stable,active
+      ├──□ rollouts-demo-66d84bcd76-dxv4x  Pod         ✔ Running  17m  ready:1/1
+      └──□ rollouts-demo-66d84bcd76-k67q4  Pod         ✔ Running  17m  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the status is <code>Paused</code> and that we now have two ReplicaSets, one for the preview service
+and one for the active (i.e. stable) service.</p>
+</div>
+<div class="paragraph">
+<p>Now navigate to the Argo Rollouts Dashboard and view the details of the application. Notice that the application
+displays the same two revisions that were presented in the CLI:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollout-dashboard-promote.png" alt="argo rollout dashboard promote">
+</div>
+</div>
+<div class="paragraph">
+<p>The dashboard shows that the newest revision is using the <code>green</code> image and is tied to the Preview
+service whereas the Active service, which is considered Stable, is associated with the previous revision using the <code>blue</code> image.</p>
+</div>
+<div class="paragraph">
+<p>To perform the promotion, you can either use the dashboard or the CLI to do it:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>For the CLI, execute the following command to perform the promotion:</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts promote rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For the UI, click the <code>Promote</code> button in the Dashboard, it will change to an orange <code>Sure?</code> button
+to ask for confirmation so click it again to confirm.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollout-dashboard-promote-button.png" alt="argo rollout dashboard promote button">
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once the promotion has been completed, you should see that the Active service is now associated with the <code>green</code> image and is marked
+as <code>Stable</code>. The pods in the older revision will automatically be scaled down to 0 after 30 seconds. This is determined by
+the <a href="https://argo-rollouts.readthedocs.io/en/stable/features/bluegreen/#scaledowndelayseconds" target="_blank" rel="noopener">scaledowndelayseconds</a>
+parameter.</p>
+</div>
+<div class="paragraph">
+<p>If you check the Active route the application is now displaying green squares.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod active -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-green.png" alt="rollouts demo app green">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="enable-auto-promotion"><a class="anchor" href="#enable-auto-promotion"></a>Enable Auto-Promotion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that a manual promotion of rollout has been performed, let&#8217;s proceed to enable the auto promotion feature. To do so, execute
+the following command to patch the rollout to set <code>autoPromotionEnabled</code> to <code>true</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc patch rollout rollouts-demo --type='json' -p='[{"op": "replace", "path": "/spec/strategy/blueGreen/autoPromotionEnabled", "value":true}]' -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now deploy a new image color <code>yellow</code> this time, in the OpenShift console navigate to the Pipeline again in the <code>user%USERNUM%-tools</code> namespace.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-pipelines-overview.png" alt="console pipelines overview">
+</div>
+</div>
+<div class="paragraph">
+<p>Click on the pipeline, select the <code>Actions</code> menu and select <code>Start</code>. When the dialog appears enter the color <code>yellow</code> this time.</p>
+</div>
+<div class="paragraph">
+<p>Press the start button and wait for the pipeline to complete as per last time. Now go back to the Argo Rollouts Dashboard and
+note that there is a new revision using the Yellow image associated with the Active service.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-yellow.png" alt="argo rollouts dashboard yellow">
+</div>
+</div>
+<div class="paragraph">
+<p>While not requiring manual intervention is great, it would be wonderful if there was a way to perform automated testing to ensure
+the validity of the new revision before Rollouts makes it available to users. Fortunately Rollouts can do this with the Analysis feature
+which will be covered in the next module.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="perform-rollback"><a class="anchor" href="#perform-rollback"></a>Perform Rollback</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have deployed our application with the color yellow but disaster! Our users really dislike yellow for some reason and insist
+that we switch back to the green color while we work to determine an acceptable shade of yellow for users.</p>
+</div>
+<div class="paragraph">
+<p>To accomplish this we will perform a rollback to the green version. This can be done either in the dashboard or in the CLI but
+here we will show the CLI way of doing it.</p>
+</div>
+<div class="paragraph">
+<p>To execute the rollback, first we need to determine the revision to rollback to. Looking at the dashboard we can see that
+the <code>green</code> image is associated with Revision 2 (assuming you did not need to do multiple deployments due to problems).</p>
+</div>
+<div class="paragraph">
+<p>To rollback the revision the <code>undo</code> command can be used, execute the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts undo rollouts-demo --to-revision=2  -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+An info message will appear when running the command, <code>unknown field `spec.template.metadata.creationTimestamp`</code>, this can be ignored.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Once this command is run, if you look at the dashboard you will see a new revision has started, revision 4. What happened?</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-rollback.png" alt="argo rollouts rollback">
+</div>
+</div>
+<div class="paragraph">
+<p>Like Kubernetes Deployments, Argo Rollouts treats a rollback as a roll forward by creating a new revision for the desired state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cleanup"><a class="anchor" href="#cleanup"></a>Clean-up</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Prior to moving on to the next module we need to perform some clean-up activities. First let&#8217;s reset the Development environment back to blue:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -k ./deploy/base -n user%USERNUM%-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next we will delete the Rollout in the <code>user%USERNUM%-prod</code> so we can start with a fresh version.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -k ./bluegreen/base -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="rollouts-workshop-overview.html" class="query-params-link">Rollout Overview</a></span>
+  <span class="next"><a href="rollouts-analysis.html" class="query-params-link">Analysis</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

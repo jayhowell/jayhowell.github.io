@@ -3,9 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Welcome to the OpenShift GitOps Workshop :: OpenShift GitOps Workshop</title>
-    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/index.html">
-    <link rel="next" href="01-getting-started.html">
+    <title>Conclusion :: OpenShift GitOps Workshop</title>
+    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/rollouts-conclusion.html">
     <meta name="generator" content="Antora 3.1.9">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -337,76 +336,47 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="index.html" class="home-link is-current"></a>
+  <a href="index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">OpenShift GitOps Workshop</a></li>
-    <li><a href="index.html">Welcome to the OpenShift GitOps Workshop</a></li>
+    <li><a href="rollouts-conclusion.html">Conclusion</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/rollouts-conclusion.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Welcome to the OpenShift GitOps Workshop</h1>
+<h1 class="page">Conclusion</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>OpenShift Gitops is based on the upstream
-<a href="https://argoproj.github.io/argo-cd/" target="_blank" rel="noopener">Argo CD</a> project. ArgoCD is
-a declarative, GitOps continuous delivery tool for Kubernetes.</p>
-</div>
-<div class="paragraph">
-<p>It follows the <strong>GitOps</strong> pattern of using Git repositories as the source of
-truth for defining the desired application state.</p>
-</div>
-<div class="paragraph">
-<p>It automates the deployment of the desired application states in the specified
-target environments. Application deployments can track updates to branches,
-tags, or be pinned to a specific version of manifests at a Git commit.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/argocd-sync-flow.png" alt="Argo CD Sync Flow" width="700">
-</div>
+<p>In this workshop we learned about Argo Rollouts, how the blue-green and canary strategies work and finally using
+Analysis to perform automated testing of the Rollout.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2>GitOps</h2>
+<h2 id="more-resources"><a class="anchor" href="#more-resources"></a>More Resources</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="https://www.openshift.com/learn/topics/gitops/" target="_blank" rel="noopener">GitOps</a> is a set of practices that leverages Git workflows to manage infrastructure and application configurations.
-By using Git repositories as the source of truth, it allows the DevOps team to store the entire state of the cluster configuration in Git so that the trail of changes are visible and auditable.</p>
-</div>
-<div class="paragraph">
-<p><strong>GitOps</strong> simplifies the propagation of infrastructure and application
-configuration changes across multiple clusters by defining your infrastructure and applications definitions as “code”.</p>
+<p>To learn more about Argo Rollouts, please feel free to checkout this resources:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Ensure that the clusters have similar states for configuration, monitoring, or storage.</p>
+<p><a href="https://argo-rollouts.readthedocs.io/en/stable/" target="_blank" rel="noopener">Argo Rollouts documentation</a></p>
 </li>
 <li>
-<p>Recover or recreate clusters from a known state.</p>
+<p><a href="https://www.redhat.com/architect/blue-green-canary-argo-rollouts" target="_blank" rel="noopener">How to do blue/green and canary deployments with Argo Rollouts</a></p>
 </li>
 <li>
-<p>Create clusters with a known state.</p>
-</li>
-<li>
-<p>Apply or revert configuration changes to multiple clusters.</p>
-</li>
-<li>
-<p>Associate templated configuration with different environments.</p>
+<p><a href="https://cloud.redhat.com/blog/trying-out-argo-rollouts-in-openshift-gitops-1.9" target="_blank" rel="noopener">Trying out Argo Rollouts in OpenShift GitOps 1.9</a></p>
 </li>
 </ul>
 </div>
 </div>
 </div>
-<nav class="pagination">
-  <span class="next"><a href="01-getting-started.html" class="query-params-link">1. Getting Started</a></span>
-</nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>

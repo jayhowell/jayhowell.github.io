@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Canary :: OpenShift GitOps Workshop</title>
+    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/rollouts-canary-rollout.html">
+    <link rel="prev" href="rollouts-analysis.html">
+    <link rel="next" href="#rollout-conclusion.adoc">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://openshiftdemos.github.io/openshift-gitops-workshop">OpenShift GitOps Workshop</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="openshift-gitops-workshop" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">OpenShift GitOps Workshop</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-getting-started.html">1. Getting Started</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-getting-started.html#cluster-login">Cluster Login</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-getting-started.html#open-web-terminal">Open the Web Terminal</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-gitops-basics.html">2. GitOps Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-gitops-basics.html#review-argocd">Review Argo CD Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-gitops-basics.html#connect-argocd">Connecting to Argo CD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-gitops-basics.html#deploy-sample-application">Deploy a Sample Application</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-kustomize.html">3. Work with Kustomize</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-kustomize.html#exploring_kustomize">Exploring the Kustomize</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#exploring_kustomize_cli">Exploring the Kustomize CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#exploring_kustomize_with_oc">Exploring Kustomize with <code>oc</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-kustomize.html#deploying_kustomized_application">Deploying Kustomized Application</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#argocd_web_console">The ArgoCD Web Console</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-kustomize.html#kustomized_application">Kustomized Application</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html">4. Work with Helm</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html#exploring-helm">Exploring Helm</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#exploring-helm-cli">Exploring the Helm CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html#exploring-helm-charts">Exploring Helm Charts</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#helm-template">Helm Template</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-helm.html#helm-charts-deploy-applications">Helm Chart Deployment in Argo CD</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#custom-values-files">Custom Values Files</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-helm.html#parameter_values">Parameter Values</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-helm.html#helm-conclusion">Conclusion: Helm on ArgoCD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-syncwaves-hooks.html">5. Sync Waves and Hooks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-syncwaves-hooks.html#using_syncwaves">Using Sync Waves</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-syncwaves-hooks.html#exploring_the_manifests_waves">Exploring Sync Wave Manifests</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-syncwaves-hooks.html#using_resource_hooks">Using Resource Hooks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-syncwaves-hooks.html#exploring_the_manifests_hooks">Exploring Resource Hook Manifests</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-syncwaves-hooks.html#deploying_the_application">Deploying the Application</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="07-app-of-apps.html">6. App of Apps pattern</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-getting-started.html">7. Rollouts</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-getting-started.html">1. Getting Started</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-getting-started.html#cluster-login">Cluster Login</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-getting-started.html#open-web-terminal">Open the Web Terminal</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-workshop-overview.html">Rollout Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-workshop-overview.html#workshop-namespaces">Workshop Namespaces</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-workshop-overview.html#review-rollout-manager">Review RolloutManager</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-workshop-overview.html#deploy-application">Deploy Application</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html">Blue-Green Rollout</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html#blue-green-strategy">Blue-Green Strategy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html#deploy-blue-green-rollout">Deploy Blue-Green Rollout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html#promote-image">Promote Image</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html#enable-auto-promotion">Enable Auto-Promotion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html#perform-rollback">Perform Rollback</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-bluegreen-rollout.html#cleanup">Clean-up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-analysis.html">Analysis</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#analysis-overview">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#analysis-deployment">Analysis Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#analysis-promotion">Promotion with Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rollouts-analysis.html#cleanup">Clean-up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rollouts-canary-rollout.html">Canary Rollout</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#canary-strategy">Canary Strategy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#deploy-canary-rollout">Deploy Canary Rollout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#promote-image">Promote Image</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#inline-analysis">Inline Analysis</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#rollout-conclusion.adoc">Conclusion</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#rollout-conclusion.adoc#more-resources">More Resources</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#08-acpgitops.adoc">8. Using ACM + GitOps</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-conclusion.html">7. Conclusion</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-conclusion.html#Resources">Resources</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">OpenShift GitOps Workshop</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">OpenShift GitOps Workshop</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">OpenShift GitOps Workshop</a></li>
+    <li><a href="rollouts-getting-started.html">7. Rollouts</a></li>
+    <li><a href="rollouts-canary-rollout.html">Canary Rollout</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/rollouts-canary-rollout.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Canary</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this module we will:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Review and understand the Canary Strategy</p>
+</li>
+<li>
+<p>Deploy the Canary Rollout to the production namespace</p>
+</li>
+<li>
+<p>Promote a new image and observe the Canary behavior</p>
+</li>
+<li>
+<p>Replace a manual pause step for testing with an Analysis</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="canary-strategy"><a class="anchor" href="#canary-strategy"></a>Canary Strategy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://argo-rollouts.readthedocs.io/en/stable/features/canary/" target="_blank" rel="noopener">Canary</a> can be
+thought of as an advanced version of blue-green. Instead of an abrupt cut-over
+of live traffic between a current and new revision, traffic is instead gradually increased to the new
+version in increments, or steps, while simultaneously decreasing the current revision. Like the
+proverbial <a href="https://en.wiktionary.org/wiki/canary_in_a_coal_mine" target="_blank" rel="noopener">canary in the coal mine</a>,
+the intent is to allow users to access the new version over time and if unexpected problems occur revert back to the
+previous version.</p>
+</div>
+<div class="paragraph">
+<p>This process is depicted in the diagram below that shows how traffic is slowly migrated from
+the current revision to the new revision until the process is completed.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/overview-canary.png" alt="overview canary">
+</div>
+</div>
+<div class="paragraph">
+<p>To manage the transition of traffic between stable and canary services, Argo Rollouts supports a variety
+of <a href="https://argo-rollouts.readthedocs.io/en/stable/features/traffic-management/" target="_blank" rel="noopener">traffic management</a> solutions. In
+the absence of a traffic management solution, Rollouts will manage traffic weight on a best effort basis by adjusting
+the number of pod replicas associated with each service.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Argo Rollouts does not currently have support for traffic shaping for OpenShift Routes. This
+work is in progress and will be available in the future as Rollouts moves to GA status
+in OpenShift GitOps. For this module we will rely on Rollouts best effort approach.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-canary-rollout"><a class="anchor" href="#deploy-canary-rollout"></a>Deploy Canary Rollout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now we will deploy the canary rollout in the <code>user%USERNUM%-prod</code> namespace following the same process that we did for the
+blue-green in the previous modules. Prior to starting, confirm you are still at the correct path.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/argo-rollouts-workshop/documentation/modules/ROOT/examples/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, let&#8217;s explore the manifests that we will be deploying in the <code>./canary/base</code> folder:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ls ./canary/base</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similar to previous modules, note we have files for <code>rollout.yaml</code>, <code>services.yaml</code> and <code>routes.yaml</code> which are
+our Kubernetes resources for Rollout, Services and Routes respectively. Examining the Rollout first you will
+see the following:</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary/base/rollout.yaml" target="_blank" rel="noopener">./canary/base/rollout.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary/base/rollout.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the rollout manifest we have changed our strategy from blue-green to canary. In the canary strategy, like the blue-green strategy, we specify
+the services to use however here they are <code>stable</code> and <code>canary</code> services. Unlike blue-green we explicitly define the promotion process by
+specifying a series of discrete steps. At each step we can set the traffic weight between the services, pause or perform an
+inline analysis.</p>
+</div>
+<div class="paragraph">
+<p>For this example, the first step sets the weight to 20% and then the second step pauses indefinitely since no duration
+is specified. This will allow us to observe the behavior of the canary and validate that it is
+performing as expected before performing a manual promotion.</p>
+</div>
+<div class="paragraph">
+<p>Once the manual promotion has been performed, the remaining steps will continue to increase the
+traffic weight with short pauses between each step. For the pause step the duration can be
+specified in seconds(s), minutes(m) or hours(h) increments.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For the purposes of this workshop the pause sequences are deliberately short, it is common
+to have much longer pauses for more complex applications.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Next let&#8217;s look at the Kubernetes services that are defined:</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary/base/services.yaml" target="_blank" rel="noopener">./canary/base/services.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary/base/services.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As expected, services have been defined <code>stable</code> and <code>canary</code> as referenced in the Rollout, however there is a new service called
+<code>all</code>. This <code>all</code> service is not managed by the rollout and includes all pods, this service is used
+to observe the behavior of rollouts as traffic weight shifts between stable and canary services.</p>
+</div>
+<div class="paragraph">
+<p>As mentioned previously, Argo Rollouts does not currently have support for traffic shaping for
+OpenShift Routes. As a result we will be relying on the best effort approach of scaling pods.
+The <code>all</code> service will enable us to see this by including all pods.</p>
+</div>
+<div class="paragraph">
+<p>With the services out of the way, let&#8217;s examine the routes:</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary/base/routes.yaml" target="_blank" rel="noopener">./canary/base/routes.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary/base/routes.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here a route has been defined to match each service that were shown previously. Note for the <code>all</code> route,
+OpenShift Route annotations are being used to disable sticky sessions and use round-robin
+load balancing. This enables us to properly observe the split of traffic as Rollouts manage the pod
+replicas between stable and canary services without interference from OpenShift&#8217;s load balancer.</p>
+</div>
+<div class="paragraph">
+<p>To deploy the canary rollout, use the following command to process the kustomization:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -k ./canary/base -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once you have run the command we can confirm that the rollout has deployed successfully. Use the following command to ensure
+that the rollout is up and running and in a Healthy state:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts get rollout rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The console should return something similar to:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:            rollouts-demo
+Namespace:       user%USERNUM%-prod
+Status:          ✔ Healthy
+Strategy:        Canary
+  Step:          8/8
+  SetWeight:     100
+  ActualWeight:  100
+Images:          quay.io/openshiftdemos/rollouts-demo:blue (stable)
+Replicas:
+  Desired:       8
+  Current:       8
+  Updated:       8
+  Ready:         8
+  Available:     8
+
+NAME                                       KIND        STATUS     AGE  INFO
+⟳ rollouts-demo                            Rollout     ✔ Healthy  24s
+└──# revision:1
+   └──⧉ rollouts-demo-66d84bcd76           ReplicaSet  ✔ Healthy  24s  stable
+      ├──□ rollouts-demo-66d84bcd76-55fd9  Pod         ✔ Running  24s  ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-8jh88  Pod         ✔ Running  24s  ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-d29gr  Pod         ✔ Running  24s  ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-d8vk9  Pod         ✔ Running  24s  ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-gqlkq  Pod         ✔ Running  24s  ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-hr77t  Pod         ✔ Running  24s  ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-rprt7  Pod         ✔ Running  24s  ready:1/1
+      └──□ rollouts-demo-66d84bcd76-wkg2s  Pod         ✔ Running  24s  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The command shows additional information about the canary rollout including the
+number of steps and the weight between services.</p>
+</div>
+<div class="paragraph">
+<p>Confirm the application is accessible, retrieve the stable route URL using the
+command below and copy to a browser tab:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod stable -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The application is running with blue squares for the current version of the application:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-blue.png" alt="rollouts demo app blue">
+</div>
+</div>
+<div class="paragraph">
+<p>If you go to the Argo Rollouts Dashboard you can see that the dashboard displays
+the steps that are defined in the rollout. Again, the dashboard URL can be retrieved
+through the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-tools dashboard -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-canary.png" alt="argo rollouts dashboard canary">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="promote-image"><a class="anchor" href="#promote-image"></a>Promote Image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section we will promote a new image and observe the behavior of the canary rollout using
+the same pipeline that we used previously. As a reminder, the pipeline can be accessed in
+the <code>user%USERNUM%-tools</code> namespace.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-pipelines-overview.png" alt="console pipelines overview">
+</div>
+</div>
+<div class="paragraph">
+<p>Go ahead and start the pipeline selecting the green image and wait for the pipeline to complete:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/console-promote-params.png" alt="console promote params">
+</div>
+</div>
+<div class="paragraph">
+<p>Once the pipeline is complete, run this command to see state of the rollout:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts get rollout rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output similar to the following:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:            rollouts-demo
+Namespace:       user%USERNUM%-prod
+Status:          ॥ Paused
+Message:         CanaryPauseStep
+Strategy:        Canary
+  Step:          1/8
+  SetWeight:     20
+  ActualWeight:  22
+Images:          quay.io/openshiftdemos/rollouts-demo:blue (stable)
+                 quay.io/openshiftdemos/rollouts-demo:green (canary)
+Replicas:
+  Desired:       8
+  Current:       9
+  Updated:       2
+  Ready:         9
+  Available:     9
+
+NAME                                       KIND        STATUS     AGE    INFO
+⟳ rollouts-demo                            Rollout     ॥ Paused   19m
+├──# revision:2
+│  └──⧉ rollouts-demo-5999df6cf9           ReplicaSet  ✔ Healthy  9m56s  canary
+│     ├──□ rollouts-demo-5999df6cf9-5fwsx  Pod         ✔ Running  9m56s  ready:1/1
+│     └──□ rollouts-demo-5999df6cf9-sl9pw  Pod         ✔ Running  9m56s  ready:1/1
+└──# revision:1
+   └──⧉ rollouts-demo-66d84bcd76           ReplicaSet  ✔ Healthy  19m    stable
+      ├──□ rollouts-demo-66d84bcd76-79c26  Pod         ✔ Running  19m    ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-c8mm7  Pod         ✔ Running  19m    ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-mt5wc  Pod         ✔ Running  19m    ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-npjvk  Pod         ✔ Running  19m    ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-pn77f  Pod         ✔ Running  19m    ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-r8rmv  Pod         ✔ Running  19m    ready:1/1
+      └──□ rollouts-demo-66d84bcd76-vcv6z  Pod         ✔ Running  19m    ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are a few things of note here. First the status of the Rollout is <code>Paused</code> due
+to the pause step with no duration. Second that we have two ReplicaSets, one with 2 pods
+and the other with 7 pods corresponding to the preview and stable services respectively.
+Recall in our first step that we set a weight of 20% to the canary service.</p>
+</div>
+<div class="paragraph">
+<p>Next visit the Argo Rollouts Dashboard and note that the the rollout is paused on the <code>pause</code>
+step:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-canary-pause.png" alt="argo rollouts dashboard canary pause">
+</div>
+</div>
+<div class="paragraph">
+<p>Now let&#8217;s see the behavior of the routes, first if you check the stable you will see
+the blue version of the application:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod stable -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-blue.png" alt="rollouts demo app blue">
+</div>
+</div>
+<div class="paragraph">
+<p>Next if we check the canary version of the application we should see the green version
+of the application.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod canary -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-green.png" alt="rollouts demo app green">
+</div>
+</div>
+<div class="paragraph">
+<p>Finally if we check the version of the application being delivered by the <code>all</code> route
+which includes all pods there will be approximately 20% green squares versus 80%
+blue squares:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get route -n user%USERNUM%-prod all -o jsonpath='{"https://"}{.spec.host}{"\n"}'</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollouts-demo-app-canary-blue-green.png" alt="rollouts demo app canary blue green">
+</div>
+</div>
+<div class="paragraph">
+<p>To promote the rollout, you can either promote it from the dashboard using the <code>Promote</code>
+button or you can promote it using the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts promote rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Observe the dashboard once it has been promoted. The dashboard will show the progression
+of the steps by highlighting each step as it is being executed. Also note how pods are
+being drained from one service to the other as traffic weighting changes.</p>
+</div>
+<div class="paragraph">
+<p>Prior to moving on to the next section, perform a cleanup to remove the current rollout
+and reset the Deployment in the dev environment back to blue.</p>
+</div>
+<div class="paragraph">
+<p>Update the deployment:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -k ./deploy/base -n user%USERNUM%-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Delete the current rollout:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -k ./canary/base -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="inline-analysis"><a class="anchor" href="#inline-analysis"></a>Inline Analysis</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the last section there was a pause step that provided an opportunity to manually test the canary
+before progressing further. However we can accomplish the same goal by using an analysis. With
+respect to the canary strategy, an analysis can be performed in the <a href="https://argo-rollouts.readthedocs.io/en/stable/features/analysis/#background-analysis" target="_blank" rel="noopener">background</a>
+or as an <a href="https://argo-rollouts.readthedocs.io/en/stable/features/analysis/#inline-analysis">inline</a> analysis.</p>
+</div>
+<div class="paragraph">
+<p>A Background Analysis happens asynchronously and does not block the progression of steps, however
+if the analysis fails it will abort the rollout similar to what we saw in the previous module with
+the blue-green strategy. In the case of an Inline Analysis, the analysis is performed as a discrete step
+and will block the progression of the rollout until it completes.</p>
+</div>
+<div class="paragraph">
+<p>In the following example we will implement an Inline Analysis. The files for this example are in the <code>./canary-analysis/base</code> folder, to view the list of files
+perform an <code>ls</code> as follows:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ls ./canary-analysis/base</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the files are identical to the previous example other than the <code>rollout.yaml</code> and the
+<code>analysistemplate.yaml</code> file. The AnalysisTemplate being used here is identical to the one
+we used in the blue-green example so we will not cover it again here.</p>
+</div>
+<div class="paragraph">
+<p>The one change in the rollout is that it now has an inline analysis step as per below:</p>
+</div>
+<div class="listingblock">
+<div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary-analysis/base/rollout.yaml" target="_blank" rel="noopener">./canary-analysis/base/rollout.yaml</a></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary-analysis/base/rollout.yaml[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the structure of the inline analysis is identical to what was used in the <code>prePromotionAnalysis</code>
+in the blue-green rollout with analysis.</p>
+</div>
+<div class="paragraph">
+<p>To deploy the canary with the inline analysis execute the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kustomize build ./canary-analysis/base | sed "s/%SUB_DOMAIN%/$SUB_DOMAIN/" | sed "s/%USER%/%USERNUM%/" | oc apply -n user%USERNUM%-prod -f -</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the command has been executed, verify that the rollout was deployed:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts get rollout rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output as follows:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:            rollouts-demo
+Namespace:       user%USERNUM%-prod
+Status:          ✔ Healthy
+Strategy:        Canary
+  Step:          7/7
+  SetWeight:     100
+  ActualWeight:  100
+Images:          quay.io/openshiftdemos/rollouts-demo:blue (stable)
+Replicas:
+  Desired:       8
+  Current:       8
+  Updated:       8
+  Ready:         8
+  Available:     8
+
+NAME                                       KIND        STATUS     AGE    INFO
+⟳ rollouts-demo                            Rollout     ✔ Healthy  4m56s
+└──# revision:1
+   └──⧉ rollouts-demo-66d84bcd76           ReplicaSet  ✔ Healthy  5s     stable
+      ├──□ rollouts-demo-66d84bcd76-c4d6j  Pod         ✔ Running  5s     ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-f9qvw  Pod         ✔ Running  5s     ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-gp9xp  Pod         ✔ Running  5s     ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-gpqwj  Pod         ✔ Running  5s     ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-k6dwl  Pod         ✔ Running  5s     ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-mlj5q  Pod         ✔ Running  5s     ready:1/1
+      ├──□ rollouts-demo-66d84bcd76-wp4tj  Pod         ✔ Running  5s     ready:1/1
+      └──□ rollouts-demo-66d84bcd76-z8kr2  Pod         ✔ Running  5s     ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, examining the Argo Rollouts Dashboard we can see the inline Analysis being shown with the other steps:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-canary-analysis.png" alt="argo rollouts dashboard canary analysis">
+</div>
+</div>
+<div class="paragraph">
+<p>Note that since we no longer have a manual pause step the promotion will complete automatically as long as the
+analysis step executes successfully.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s do our promotion to the <code>green</code> image, go to the <code>user%USERNUM%-tools</code> namespace and start the pipeline
+again. Once the pipeline has completed, observe the behavior of the canary deployment during the process in
+the Argo Rollouts Dashboard.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you want to try this multiple times to look at different things feel free to use the pipeline
+to deploy different colors. Remember the available colors are available .<a href="https://quay.io/repository/openshiftdemos/rollouts-demo?tab=tags" target="_blank" rel="noopener">here</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In the dashboard, if you catch it before it completes, you can see the analysis step executing. Similar to
+what we saw in the previous module, the analysis button will be grey while it is executing, green when it
+has completed successfully or red if it failed. Here is what the dashboard looks like while the
+analysis is executing:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-analysis-executing.png" alt="argo rollouts dashboard analysis executing">
+</div>
+</div>
+<div class="paragraph">
+<p>Once the promotion is completed, the dashboard will appear as follows:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argo-rollouts-dashboard-analysis-completed.png" alt="argo rollouts dashboard analysis completed">
+</div>
+</div>
+<div class="paragraph">
+<p>In the command line, you can view the rollout using the command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc argo rollouts get rollout rollouts-demo -n user%USERNUM%-prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Information about the rollout will appear as follows:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:            rollouts-demo
+Namespace:       user%USERNUM%-prod
+Status:          ✔ Healthy
+Strategy:        Canary
+  Step:          7/7
+  SetWeight:     100
+  ActualWeight:  100
+Images:          quay.io/openshiftdemos/rollouts-demo:green (stable)
+Replicas:
+  Desired:       8
+  Current:       8
+  Updated:       8
+  Ready:         8
+  Available:     8
+
+NAME                                                        KIND         STATUS        AGE    INFO
+⟳ rollouts-demo                                             Rollout      ✔ Healthy     4m19s
+├──# revision:2
+│  ├──⧉ rollouts-demo-5999df6cf9                            ReplicaSet   ✔ Healthy     3m13s  stable
+│  │  ├──□ rollouts-demo-5999df6cf9-g7l75                   Pod          ✔ Running     3m13s  ready:1/1
+│  │  ├──□ rollouts-demo-5999df6cf9-zxkss                   Pod          ✔ Running     3m13s  ready:1/1
+│  │  ├──□ rollouts-demo-5999df6cf9-mj9m8                   Pod          ✔ Running     80s    ready:1/1
+│  │  ├──□ rollouts-demo-5999df6cf9-ph9jk                   Pod          ✔ Running     80s    ready:1/1
+│  │  ├──□ rollouts-demo-5999df6cf9-rnvgm                   Pod          ✔ Running     80s    ready:1/1
+│  │  ├──□ rollouts-demo-5999df6cf9-btzlf                   Pod          ✔ Running     67s    ready:1/1
+│  │  ├──□ rollouts-demo-5999df6cf9-gl8k4                   Pod          ✔ Running     67s    ready:1/1
+│  │  └──□ rollouts-demo-5999df6cf9-dlchv                   Pod          ✔ Running     54s    ready:1/1
+│  └──α rollouts-demo-5999df6cf9-2-1                        AnalysisRun  ✔ Successful  3m10s  ✔ 5
+│     └──⊞ fd0f7c64-c6e4-4447-bbef-5d2f4f62563b.run-load.1  Job          ✔ Successful  3m10s
+└──# revision:1
+   └──⧉ rollouts-demo-66d84bcd76                            ReplicaSet   • ScaledDown  4m19s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this module the canary strategy for Argo Rollouts has been reviewed along
+with how to use an inline analysis step to perform testing of the canary deployment.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="rollouts-analysis.html" class="query-params-link">Analysis</a></span>
+  <span class="next"><a href="#rollout-conclusion.adoc" class="query-params-link">Conclusion</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
