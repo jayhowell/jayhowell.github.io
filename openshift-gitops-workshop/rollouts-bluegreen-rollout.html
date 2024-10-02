@@ -290,10 +290,10 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="#rollout-conclusion.adoc">Conclusion</a>
+    <a class="nav-link" href="rollouts-conclusion.html">Conclusion</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="#rollout-conclusion.adoc#more-resources">More Resources</a>
+    <a class="nav-link" href="rollouts-conclusion.html#more-resources">More Resources</a>
   </li>
 </ul>
   </li>
@@ -426,7 +426,32 @@ confirm you are still at the correct path.</p>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen/base/rollout.yaml" target="_blank" rel="noopener">./bluegreen/base/rollout.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-bluegreen-rollout.adoc - include::ROOT:example$bluegreen/base/rollout.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rollouts-demo
+  template:
+    metadata:
+      labels:
+        app: rollouts-demo
+    spec:
+      containers:
+      - name: rollouts-demo
+        image: quay.io/openshiftdemos/rollouts-demo:blue
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+  strategy:
+    blueGreen:
+      activeService: active
+      previewService: preview
+      autoPromotionEnabled: false</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -451,7 +476,35 @@ and some of these additional features will be explored as we progress through th
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen/base/services.yaml" target="_blank" rel="noopener">./bluegreen/base/services.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-bluegreen-rollout.adoc - include::ROOT:example$bluegreen/base/services.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rollouts-demo
+  name: active
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: http
+  selector:
+    app: rollouts-demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rollouts-demo
+  name: preview
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: http
+  selector:
+    app: rollouts-demo</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -467,7 +520,33 @@ we deploy the rollout this will be reviewed in more detail.</p>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen/base/routes.yaml" target="_blank" rel="noopener">./bluegreen/base/routes.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-bluegreen-rollout.adoc - include::ROOT:example$bluegreen/base/routes.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: active
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: active
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: preview
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: preview</code></pre>
 </div>
 </div>
 <div class="paragraph">

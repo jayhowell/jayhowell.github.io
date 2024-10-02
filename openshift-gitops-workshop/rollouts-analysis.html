@@ -290,10 +290,10 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="#rollout-conclusion.adoc">Conclusion</a>
+    <a class="nav-link" href="rollouts-conclusion.html">Conclusion</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="#rollout-conclusion.adoc#more-resources">More Resources</a>
+    <a class="nav-link" href="rollouts-conclusion.html#more-resources">More Resources</a>
   </li>
 </ul>
   </li>
@@ -431,7 +431,49 @@ the file we see it appears as follows:</p>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen-analysis/base/analysistemplate.yaml" target="_blank" rel="noopener">./bluegreen-analysis/base/analysistemplate.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-analysis.adoc - include::ROOT:example$bluegreen-analysis/base/analysistemplate.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">kind: AnalysisTemplate
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: smoke-tests
+spec:
+  args:
+  - name: namespace
+  - name: route-name
+  - name: route-url
+  - name: api-token
+    valueFrom:
+      secretKeyRef:
+        name: monitor-auth-secret
+        key: token
+  metrics:
+  - name: success-rate
+    interval: 30s
+    count: 4
+    successCondition: result[0] == 0
+    failureLimit: 0
+    provider:
+      prometheus:
+        address: <a href="https://thanos-querier.openshift-monitoring.svc.cluster.local:9091" class="bare">https://thanos-querier.openshift-monitoring.svc.cluster.local:9091</a>
+        timeout: 40
+        insecure: true
+        headers:
+          - key: Authorization
+            value: "Bearer {{args.api-token}}"
+        query: |
+          irate(haproxy_backend_http_responses_total{exported_namespace='{{args.namespace}}', route=~"{{args.route-name}}", code="5xx"}[1m]) &gt; 5 or on() vector(0)
+  - name: run-load
+    provider:
+      job:
+        spec:
+          backoffLimit: 1
+          template:
+            spec:
+              containers:
+              - name: siege
+                image: quay.io/gnunn/tools:latest
+                command: [sh, -c]
+                args: ["siege -c 20 -r 15 -d10 -v <a href="http://{{args.route-url}}"" class="bare">http://{{args.route-url}}"</a>]
+              restartPolicy: Never</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -487,7 +529,44 @@ to access the OpenShift monitoring stack. It was created by the GitOps process w
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/bluegreen-analysis/base/rollout.yaml" target="_blank" rel="noopener">./bluegreen-analysis/base/rollout.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-analysis.adoc - include::ROOT:example$bluegreen-analysis/base/rollout.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rollouts-demo
+  strategy:
+    blueGreen:
+      activeService: active
+      previewService: preview
+      autoPromotionEnabled: true
+      prePromotionAnalysis:
+        args:
+        - name: namespace
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: route-name
+          value: preview
+        - name: route-url
+          value: preview-user%USER%-prod.%SUB_DOMAIN%
+        templates:
+        - templateName: smoke-tests
+  template:
+    metadata:
+      labels:
+        app: rollouts-demo
+    spec:
+      containers:
+      - image: quay.io/openshiftdemos/rollouts-demo:blue
+        imagePullPolicy: IfNotPresent
+        name: rollouts-demo
+        ports:
+        - containerPort: 8080</code></pre>
 </div>
 </div>
 <div class="paragraph">

@@ -290,10 +290,10 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="#rollout-conclusion.adoc">Conclusion</a>
+    <a class="nav-link" href="rollouts-conclusion.html">Conclusion</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="#rollout-conclusion.adoc#more-resources">More Resources</a>
+    <a class="nav-link" href="rollouts-conclusion.html#more-resources">More Resources</a>
   </li>
 </ul>
   </li>
@@ -566,19 +566,70 @@ and <code>route.yaml</code> represent the Deployment, Service and OpenShift Rout
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/deploy.yaml" target="_blank" rel="noopener">./deploy/base/deploy.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/deploy.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rollouts-demo
+  template:
+    metadata:
+      labels:
+        app: rollouts-demo
+    spec:
+      containers:
+      - image: quay.io/openshiftdemos/rollouts-demo:blue
+        imagePullPolicy: IfNotPresent
+        name: rollouts-demo
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/service.yaml" target="_blank" rel="noopener">./deploy/base/service.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/service.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rollouts-demo
+  name: rollouts-demo
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: http
+  selector:
+    app: rollouts-demo</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/route.yaml" target="_blank" rel="noopener">./deploy/base/route.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/route.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: rollouts-demo
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: rollouts-demo</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -603,7 +654,13 @@ in GitOps and we use kustomize here to simplify our deployments.</p>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/deploy/base/kustomization.yaml" target="_blank" rel="noopener">./deploy/base/kustomization.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-workshop-overview.adoc - include::ROOT:example$deploy/base/kustomization.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deploy.yaml
+- route.yaml
+- service.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">

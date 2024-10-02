@@ -6,7 +6,7 @@
     <title>Canary :: OpenShift GitOps Workshop</title>
     <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/rollouts-canary-rollout.html">
     <link rel="prev" href="rollouts-analysis.html">
-    <link rel="next" href="#rollout-conclusion.adoc">
+    <link rel="next" href="rollouts-conclusion.html">
     <meta name="generator" content="Antora 3.1.9">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -290,10 +290,10 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="#rollout-conclusion.adoc">Conclusion</a>
+    <a class="nav-link" href="rollouts-conclusion.html">Conclusion</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="#rollout-conclusion.adoc#more-resources">More Resources</a>
+    <a class="nav-link" href="rollouts-conclusion.html#more-resources">More Resources</a>
   </li>
 </ul>
   </li>
@@ -445,7 +445,40 @@ see the following:</p>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary/base/rollout.yaml" target="_blank" rel="noopener">./canary/base/rollout.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary/base/rollout.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 8
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rollouts-demo
+  template:
+    metadata:
+      labels:
+        app: rollouts-demo
+    spec:
+      containers:
+      - name: rollouts-demo
+        image: quay.io/openshiftdemos/rollouts-demo:blue
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+  strategy:
+    canary:
+      canaryService: canary
+      stableService: stable
+      steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 40
+      - pause: {duration: 10s}
+      - setWeight: 60
+      - pause: {duration: 10s}
+      - setWeight: 80
+      - pause: {duration: 10s}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -483,7 +516,44 @@ to have much longer pauses for more complex applications.
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary/base/services.yaml" target="_blank" rel="noopener">./canary/base/services.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary/base/services.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: stable
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: rollouts-demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: rollouts-demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: all
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: rollouts-demo</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -502,7 +572,50 @@ The <code>all</code> service will enable us to see this by including all pods.</
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary/base/routes.yaml" target="_blank" rel="noopener">./canary/base/routes.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary/base/routes.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: stable
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: stable
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: canary
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: canary
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: all
+  annotations:
+    haproxy.router.openshift.io/disable_cookies: 'true'
+    haproxy.router.openshift.io/balance: roundrobin
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: all</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -797,7 +910,50 @@ we used in the blue-green example so we will not cover it again here.</p>
 <div class="listingblock">
 <div class="title"><a href="https://github.com/OpenShiftDemos/argo-rollouts-workshop/blob/main/documentation/modules/ROOT/examples/canary-analysis/base/rollout.yaml" target="_blank" rel="noopener">./canary-analysis/base/rollout.yaml</a></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Unresolved include directive in modules/ROOT/pages/rollouts-canary-rollout.adoc - include::ROOT:example$canary-analysis/base/rollout.yaml[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 8
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rollouts-demo
+  template:
+    metadata:
+      labels:
+        app: rollouts-demo
+    spec:
+      containers:
+      - name: rollouts-demo
+        image: quay.io/openshiftdemos/rollouts-demo:blue
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+  strategy:
+    canary:
+      canaryService: canary
+      stableService: stable
+      steps:
+      - setWeight: 20
+      - analysis:
+          templates:
+          - templateName: smoke-tests
+          args:
+            - name: namespace
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: route-name
+              value: canary
+            - name: route-url
+              value: canary-user%USER%-prod.%SUB_DOMAIN%
+      - pause: {duration: 10s}
+      - setWeight: 60
+      - pause: {duration: 10s}
+      - setWeight: 80
+      - pause: {duration: 10s}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -957,7 +1113,7 @@ with how to use an inline analysis step to perform testing of the canary deploym
 </div>
 <nav class="pagination">
   <span class="prev"><a href="rollouts-analysis.html" class="query-params-link">Analysis</a></span>
-  <span class="next"><a href="#rollout-conclusion.adoc" class="query-params-link">Conclusion</a></span>
+  <span class="next"><a href="rollouts-conclusion.html" class="query-params-link">Conclusion</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
