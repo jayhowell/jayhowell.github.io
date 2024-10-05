@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Conclusion :: OpenShift Ultimate GitOps Workshop</title>
-    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/rollouts-conclusion.html">
-    <link rel="prev" href="rollouts-canary-rollout.html">
-    <link rel="next" href="#08-acpgitops.adoc">
+    <title>Installing GitOps with ACM :: OpenShift Ultimate GitOps Workshop</title>
+    <link rel="canonical" href="https://openshiftdemos.github.io/openshift-gitops-workshop/openshift-gitops-workshop/acm-deploy-gitops.html">
+    <link rel="prev" href="01-getting-started.html">
+    <link rel="next" href="02-gitops-basics.html">
     <meta name="generator" content="Antora 3.1.9">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -83,7 +83,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="acm-deploy-gitops.html">2. Installing Gitops with Advanced ClusterManager</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -291,12 +291,12 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="rollouts-conclusion.html">Conclusion</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="#more-resources">More Resources</a>
+    <a class="nav-link" href="rollouts-conclusion.html#more-resources">More Resources</a>
   </li>
 </ul>
   </li>
@@ -345,47 +345,208 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">OpenShift Ultimate GitOps Workshop</a></li>
-    <li><a href="rollouts-getting-started.html">8. Rollouts</a></li>
-    <li><a href="rollouts-conclusion.html">Conclusion</a></li>
+    <li><a href="acm-deploy-gitops.html">2. Installing Gitops with Advanced ClusterManager</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/rollouts-conclusion.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/acm-deploy-gitops.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Conclusion</h1>
-<div id="preamble">
-<div class="sectionbody">
+<h1 class="page">Installing GitOps with ACM</h1>
+<div class="sect2">
+<h3 id="_deploying_policies_with_policy_generator"><a class="anchor" href="#_deploying_policies_with_policy_generator"></a><strong>Deploying Policies with Policy Generator</strong></h3>
 <div class="paragraph">
-<p>In this workshop we learned about Argo Rollouts, how the blue-green and canary strategies work and finally using
-Analysis to perform automated testing of the Rollout.</p>
+<p>This Policy Generator definition will achieve 2 configuration policies:</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="more-resources"><a class="anchor" href="#more-resources"></a>More Resources</h2>
-<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
 <div class="paragraph">
-<p>To learn more about Argo Rollouts, please feel free to checkout this resources:</p>
+<p><strong>openshift-gitops-installed:</strong> The goal of the first one is to inform if
+the OpenShift GitOps operator is installed on managed clusters.</p>
 </div>
+<div class="paragraph">
+<p><strong>kubeadmin-removed</strong>: The goal of this second policy is to inform if the
+kubeadmin user is removed from managed clusters.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Both policies are informative only and will only execute them manually
+to showcase how to resolve issues.</p>
+</div>
+<div class="paragraph">
+<p>In order to deliver these policies we will need to leverage the RHACM
+Application engine and the GitOps Subscription model.</p>
+</div>
+<div class="paragraph">
+<p><strong><span class="underline">Pre-requisite</span></strong>: Before we start, on the <strong>local-cluster</strong>,
+make sure to add a label if it’s not there yet: <strong>rhdp_usage=development</strong></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/image5.png" alt="image5"></span></p>
+</div>
+<div class="paragraph">
+<p>Let’s just do <strong>one more step</strong>: In the bastion machine, run this command
+below to make sure our lab user has the right permissions to create
+policies with policy generator:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">cat &lt;&lt; EOF \| oc apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+name: open-cluster-management:subscription-admin
+roleRef:
+apiGroup: rbac.authorization.k8s.io
+kind: ClusterRole
+name: open-cluster-management:subscription-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+kind: User
+name: kube:admin
+- apiGroup: rbac.authorization.k8s.io
+kind: User
+name: system:admin
+- apiGroup: rbac.authorization.k8s.io
+kind: User
+name: admin
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, in the <strong>ACM UI</strong>, navigate to <strong>Applications</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Click <strong>Create application</strong>, select <strong>Subscription</strong>. Enter the following
+information:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://argo-rollouts.readthedocs.io/en/stable/" target="_blank" rel="noopener">Argo Rollouts documentation</a></p>
+<p><strong>Name</strong>: policy-generator<br></p>
 </li>
 <li>
-<p><a href="https://www.redhat.com/architect/blue-green-canary-argo-rollouts" target="_blank" rel="noopener">How to do blue/green and canary deployments with Argo Rollouts</a></p>
+<p><strong>Namespace</strong>: policy-generator<br></p>
 </li>
 <li>
-<p><a href="https://cloud.redhat.com/blog/trying-out-argo-rollouts-in-openshift-gitops-1.9" target="_blank" rel="noopener">Trying out Argo Rollouts in OpenShift GitOps 1.9</a></p>
+<p>Under repository types, select the <strong>GIT</strong> <strong>repository</strong><br></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>URL</strong>:
+<a href="https://github.com/levenhagen/demo-policygenerator.git" target="_blank" rel="noopener">https://github.com/levenhagen/demo-policygenerator.git</a><br></p>
 </li>
 </ul>
 </div>
+</li>
+<li>
+<p><strong>Branch</strong>: main<br>
+<strong>Under *<span class="underline">Select cluster for application deployment</span></strong>, Select
+<strong>global</strong> clusterSet and <strong>Deploy only to local cluster</strong><br></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Label</strong>: name - equals any of - <strong>Value</strong>: local-cluster</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Verify all the information is correct. <strong>Click Create</strong></p>
+</li>
+</ul>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>It will take a few minutes to deploy the application, Click on the
+<strong>Topology Tab</strong> to view and verify that all of the circles are green.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/image16.png" alt="image16"></span></p>
+</div>
+<div class="paragraph">
+<p>Navigate to the <strong>Governance</strong> menu.</p>
+</div>
+<div class="paragraph">
+<p>Click on the <strong>Policies</strong> tab.</p>
+</div>
+<div class="paragraph">
+<p>Verify that you see 2 policies:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>kubeadmin-removed</strong></p>
+</li>
+<li>
+<p><strong>openshift-gitops-installed</strong></p>
+</li>
+</ul>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/image3.png" alt="image3"></span></p>
+</div>
+<div class="paragraph">
+<p>Notice that the <strong>kubeadmin</strong> and the <strong>openshift-gitops</strong> policies shows ✅
+(compliant). This means there’s no kubeadmin password in this cluster,
+which is a best practice. And that OpenShift GitOps is installed. If you
+didn’t stall OpenShift GitOps manually through the Operator Hub, as
+stated in the previous section, the Governance would report a violation
+❗.</p>
+</div>
+<div class="paragraph">
+<p>If that’s the case, you can go ahead and enforce them.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>On the <strong>openshift-gitops-installed</strong> policy, click on the ellipses and
+set policy to <strong>Enforce</strong></p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/image7.png" alt="image7"></span></p>
+</div>
+<div class="paragraph">
+<p>Click the <strong>Enforce</strong> button to verify<br>
+Wait a few minutes and you will see that the <strong>Cluster Violations</strong> will
+go from <strong>red</strong> to *green.<br></p>
+</div>
+<div class="paragraph">
+<p>Click on the Policy and select Results. Verify that the <strong>GitOps</strong>
+<strong>operator</strong> has been installed.*</p>
+</div>
+<div class="paragraph">
+<p>Feel free to repeat the steps with the <strong>kubeadmin-removed</strong> <strong>Policy</strong>,
+however if you enforce this in a cluster that has no other Identity
+provider configured, you won’t be able to access that cluster through
+the console as the only account created on these clusters is Kubadmin.</p>
+</div>
+<div class="paragraph">
+<p>Now you have succesfully created a Policy leveraing the Policy Generator
+to scan your clusters, if you would like to play with other policies
+please visit the
+<a href="https://github.com/stolostron/policy-collection" target="_blank" rel="noopener">Policy Repo</a> for more Policies you can test out.</p>
+</div>
+<div class="paragraph">
+<p>Watch these 2 videos to learn
+more<br>
+* <a href="https://www.youtube.com/watch?v=MDXx6j6pJp0&amp;list=PLbMP1JcGBmSFA56rykbH2fg1F9Tozk4of&amp;index=4&amp;t=4s&amp;pp=iAQB" target="_blank" rel="noopener">RHACM Policy-based Governance Overview</a><br>
+* <a href="https://www.youtube.com/watch?v=mopAOf6W2V0&amp;list=PLbMP1JcGBmSFA56rykbH2fg1F9Tozk4of&amp;index=5&amp;t=5s&amp;pp=iAQB" target="_blank" rel="noopener">Upgrading OpenShift with RHACM Policies and the TALM operator</a>.</p>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="rollouts-canary-rollout.html" class="query-params-link">Canary Rollout</a></span>
-  <span class="next"><a href="#08-acpgitops.adoc" class="query-params-link">9. Using ACM + GitOps</a></span>
+  <span class="prev"><a href="01-getting-started.html" class="query-params-link">1. Getting Started</a></span>
+  <span class="next"><a href="02-gitops-basics.html" class="query-params-link">3. GitOps Basics</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
