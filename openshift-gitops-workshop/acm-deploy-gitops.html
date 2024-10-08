@@ -348,7 +348,7 @@
     <li><a href="acm-deploy-gitops.html">2. Installing Gitops with Advanced ClusterManager</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/openshift-gitops-workshop/documentation/modules/ROOT/pages/acm-deploy-gitops.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///home/jhowell/Projects/jay-howell-openshift-gitops-workshop/documentation/modules/ROOT/pages/acm-deploy-gitops.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
@@ -392,25 +392,25 @@ policies with policy generator:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">cat &lt;&lt; EOF | oc apply -f -
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">cat &lt;&lt; EOF \| oc apply -f -
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: open-cluster-management:subscription-admin
+name: open-cluster-management:subscription-admin
 roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: open-cluster-management:subscription-admin
+apiGroup: rbac.authorization.k8s.io
+kind: ClusterRole
+name: open-cluster-management:subscription-admin
 subjects:
 - apiGroup: rbac.authorization.k8s.io
-  kind: User
-  name: kube:admin
+kind: User
+name: kube:admin
 - apiGroup: rbac.authorization.k8s.io
-  kind: User
-  name: system:admin
+kind: User
+name: system:admin
 - apiGroup: rbac.authorization.k8s.io
-  kind: User
-  name: admin
+kind: User
+name: admin
 EOF</code></pre>
 </div>
 </div>
